@@ -16,10 +16,17 @@ class DataTable extends React.Component {
   }
 
   newRowsState(rows) {
+    const { rowsPerPage } = this.props
+    
+    let totalNumberOfPages = 0
+    if (rowsPerPage > 0) {
+      totalNumberOfPages = Math.ceil(rows.length / rowsPerPage)
+    }
+
     return {
       rows,
       currentPageNumber: 1,
-      totalNumberOfPages: this.calculateTotalNumberOfPages(rows)
+      totalNumberOfPages
     }
   }
 
@@ -28,12 +35,6 @@ class DataTable extends React.Component {
       const newState = this.newRowsState(this.props.rows)
       this.setState(newState)
     }
-  }
-
-  calculateTotalNumberOfPages(rows) {
-    const { rowsPerPage } = this.props
-    if (rowsPerPage == 0) return 0
-    return Math.ceil(rows.length / rowsPerPage)
   }
 
   search = (event) => {
