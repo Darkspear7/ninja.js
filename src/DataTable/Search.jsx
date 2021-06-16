@@ -9,7 +9,7 @@ const Search = (props) => {
         type="search"
         className="form-control"
         placeholder="Søg brugere"
-        onChange={onSearch.bind(this)} />
+        onChange={onSearch} />
     </div>
   )
 }

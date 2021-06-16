@@ -5,23 +5,39 @@ import Row from './Row'
 import Search from './Search'
 
 class DataTable extends React.Component {
-  state = {
-    rows: this.props.rows,
-    currentPageNumber: 0,
-    totalNumberOfPages: this.calculateTotalNumberOfPages(this.props.rows)
-  }
-
   static defaultProps = {
     rowsPerPage: 40
   }
 
-  calculateTotalNumberOfPages(rows) {
-    const { rowsPerPage } = this.props
-    if (rowsPerPage == 0) return 0
-    return Math.ceil(rows.length / rowsPerPage)
+  constructor(props) {
+    super(props)
+
+    this.state = this.newRowsState(this.props.rows)
   }
 
-  search(event) {
+  newRowsState(rows) {
+    const { rowsPerPage } = this.props
+    
+    let totalNumberOfPages = 0
+    if (rowsPerPage > 0) {
+      totalNumberOfPages = Math.ceil(rows.length / rowsPerPage)
+    }
+
+    return {
+      rows,
+      currentPageNumber: 1,
+      totalNumberOfPages
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.rows !== this.props.rows || prevProps.rowsPerPage !== this.props.rowsPerPage) {
+      const newState = this.newRowsState(this.props.rows)
+      this.setState(newState)
+    }
+  }
+
+  search = (event) => {
     const { rows } = this.props
     const text = event.target.value
     let rowsFound = rows
@@ -33,41 +49,39 @@ class DataTable extends React.Component {
       })
     }
 
-    this.setState({
-      rows: rowsFound,
-      currentPageNumber: 0,
-      totalNumberOfPages: this.calculateTotalNumberOfPages(rowsFound)
-    })
+    const newState = this.newRowsState(rowsFound)
+    this.setState(newState)
   }
 
-  changeToPageNumber(pageNumber) {
+  changeToPageNumber = (pageNumber) => {
     this.setState({ currentPageNumber: pageNumber })
   }
 
-  rowsInPageNumber(pageNumber) {
+  renderRows() {
+    const { rows, currentPageNumber } = this.state
     const { rowsPerPage } = this.props
-    const startIndex = pageNumber * rowsPerPage
-    return [startIndex, startIndex + rowsPerPage]
+    const startIndex = (currentPageNumber - 1) * rowsPerPage
+
+    return rows
+      .slice(startIndex, startIndex + rowsPerPage)
+      .map(row => <Row key={row.per_id} row={row} />)
   }
 
   render() {
-    const { rows, currentPageNumber, totalNumberOfPages } = this.state
-    const rowsToRender = rows
-      .map(row => <Row key={row.per_id} row={row} />)
-      .slice(...this.rowsInPageNumber(currentPageNumber))
+    const { currentPageNumber, totalNumberOfPages } = this.state
 
     return(
       <div>
-        <Search onSearch={this.search.bind(this)} />
+        <Search onSearch={this.search} />
         <table>
           <tbody>
-            { rowsToRender }
+            { this.renderRows() }
           </tbody>
         </table>
         <Pagination
           currentPageNumber={currentPageNumber}
           totalNumberOfPages={totalNumberOfPages}
-          onChange={this.changeToPageNumber.bind(this)} />
+          onChange={this.changeToPageNumber} />
       </div>
     )
   }
