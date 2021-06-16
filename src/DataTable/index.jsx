@@ -5,12 +5,6 @@ import Row from './Row'
 import Search from './Search'
 
 class DataTable extends React.Component {
-  state = {
-    rows: this.props.rows,
-    currentPageNumber: 1,
-    totalNumberOfPages: this.calculateTotalNumberOfPages(this.props.rows)
-  }
-
   static defaultProps = {
     rowsPerPage: 40
   }
@@ -18,8 +12,22 @@ class DataTable extends React.Component {
   constructor(props) {
     super(props)
 
-    this.search = this.search.bind(this)
-    this.changeToPageNumber = this.changeToPageNumber.bind(this)
+    this.state = this.newRowsState(this.props.rows)
+  }
+
+  newRowsState(rows) {
+    return {
+      rows,
+      currentPageNumber: 1,
+      totalNumberOfPages: this.calculateTotalNumberOfPages(rows)
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.rows !== this.props.rows || prevProps.rowsPerPage !== this.props.rowsPerPage) {
+      const newState = this.newRowsState(this.props.rows)
+      this.setState(newState)
+    }
   }
 
   calculateTotalNumberOfPages(rows) {
@@ -40,11 +48,8 @@ class DataTable extends React.Component {
       })
     }
 
-    this.setState({
-      rows: rowsFound,
-      currentPageNumber: 1,
-      totalNumberOfPages: this.calculateTotalNumberOfPages(rowsFound)
-    })
+    const newState = this.newRowsState(rowsFound)
+    this.setState(newState)
   }
 
   changeToPageNumber(pageNumber) {
