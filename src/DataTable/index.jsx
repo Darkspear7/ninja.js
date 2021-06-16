@@ -56,18 +56,13 @@ class DataTable extends React.Component {
     this.setState({ currentPageNumber: pageNumber })
   }
 
-  rowsInPageNumber(pageNumber) {
-    const { rowsPerPage } = this.props
-    const startIndex = (pageNumber - 1) * rowsPerPage
-    return [startIndex, startIndex + rowsPerPage]
-  }
-
   renderRows() {
     const { rows, currentPageNumber } = this.state
-    const [startIndex, count] = this.rowsInPageNumber(currentPageNumber)
+    const { rowsPerPage } = this.props
+    const startIndex = (currentPageNumber - 1) * rowsPerPage
 
     return rows
-      .slice(startIndex, count)
+      .slice(startIndex, startIndex + rowsPerPage)
       .map(row => <Row key={row.per_id} row={row} />)
   }
 
