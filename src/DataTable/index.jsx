@@ -36,7 +36,7 @@ class DataTable extends React.Component {
     return Math.ceil(rows.length / rowsPerPage)
   }
 
-  search(event) {
+  search = (event) => {
     const { rows } = this.props
     const text = event.target.value
     let rowsFound = rows
@@ -52,7 +52,7 @@ class DataTable extends React.Component {
     this.setState(newState)
   }
 
-  changeToPageNumber(pageNumber) {
+  changeToPageNumber = (pageNumber) => {
     this.setState({ currentPageNumber: pageNumber })
   }
 
