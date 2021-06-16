@@ -57,18 +57,24 @@ class DataTable extends React.Component {
     return [startIndex, startIndex + rowsPerPage]
   }
 
-  render() {
-    const { rows, currentPageNumber, totalNumberOfPages } = this.state
-    const rowsToRender = rows
+  renderRows() {
+    const { rows, currentPageNumber } = this.state
+    const [startIndex, count] = this.rowsInPageNumber(currentPageNumber)
+
+    return rows
+      .slice(startIndex, count)
       .map(row => <Row key={row.per_id} row={row} />)
-      .slice(...this.rowsInPageNumber(currentPageNumber))
+  }
+
+  render() {
+    const { currentPageNumber, totalNumberOfPages } = this.state
 
     return(
       <div>
         <Search onSearch={this.search} />
         <table>
           <tbody>
-            { rowsToRender }
+            { this.renderRows() }
           </tbody>
         </table>
         <Pagination
