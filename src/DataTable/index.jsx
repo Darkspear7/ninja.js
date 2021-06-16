@@ -7,7 +7,7 @@ import Search from './Search'
 class DataTable extends React.Component {
   state = {
     rows: this.props.rows,
-    currentPageNumber: 0,
+    currentPageNumber: 1,
     totalNumberOfPages: this.calculateTotalNumberOfPages(this.props.rows)
   }
 
@@ -42,7 +42,7 @@ class DataTable extends React.Component {
 
     this.setState({
       rows: rowsFound,
-      currentPageNumber: 0,
+      currentPageNumber: 1,
       totalNumberOfPages: this.calculateTotalNumberOfPages(rowsFound)
     })
   }
@@ -53,7 +53,7 @@ class DataTable extends React.Component {
 
   rowsInPageNumber(pageNumber) {
     const { rowsPerPage } = this.props
-    const startIndex = pageNumber * rowsPerPage
+    const startIndex = (pageNumber - 1) * rowsPerPage
     return [startIndex, startIndex + rowsPerPage]
   }
 
